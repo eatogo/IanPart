@@ -15,6 +15,9 @@ Timestamp usercreatetime=null;
 String userstatus=null;
 String useridentity=null;
 Integer userstore=null;
+public MemberBean() {
+	super();
+}
 public MemberBean(Integer userid, String usercellphone, String userpassword, String username, String useremail,
 		String useravater, Timestamp usercreatetime, String userstatus, String useridentity, Integer userstore) {
 	super();

@@ -9,12 +9,14 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import _00_init.util.GlobalService;
+
 public class MemberDao_Jdbc implements MemberDao {
 	private DataSource ds=null;
 	public MemberDao_Jdbc() {
 		try {
 			Context ctx=new InitialContext();
-			ds=(DataSource)ctx.lookup("java:comp/env/jdbc/MemberDB");
+			ds=(DataSource)ctx.lookup(GlobalService.JNDI_DB_NAME);
 		}catch(Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
@@ -49,8 +51,8 @@ public class MemberDao_Jdbc implements MemberDao {
 		try(
 				Connection connection=ds.getConnection();
 				PreparedStatement ps=connection.prepareStatement(sql);){
-		
-		ps.setString(1,mb.getUserpassword());
+			String encrypedString = GlobalService.encryptString(mb.getUserpassword());
+		ps.setString(1,GlobalService.getMD5Endocing(encrypedString));
 		ps.setString(2,mb.getUsercellphone());
 		ps.setString(3,mb.getUsername());
 		ps.setString(4,mb.getUseremail());

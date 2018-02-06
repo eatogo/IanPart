@@ -65,6 +65,7 @@ public class RegisterServlet extends HttpServlet {
 					} else {
 						Part photo = request.getPart("photo");
 						filename = photo.getSubmittedFileName();
+						useravater =filename;
 					}
 
 				}
@@ -97,7 +98,7 @@ public class RegisterServlet extends HttpServlet {
 				errorMsg.put("errorIDDup", "此帳號已存在，請換新帳號");
 			}else{
 				Timestamp ts=new java.sql.Timestamp(System.currentTimeMillis());
-				MemberBean mem=new MemberBean(null, usercellphone, userpassword, username, useremail1, null, ts, "registered", "consumer",1);
+				MemberBean mem=new MemberBean(null, usercellphone, userpassword, username, useremail1, useravater, ts, "normal", "consumer",1);
 			int n=dao.saveUser(mem);
 			if(n==1) {
 				msgOK.put("InsertOK","<Font color='red'>新增成功，請開始使用本系統</Font>");
