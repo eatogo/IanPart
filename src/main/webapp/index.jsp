@@ -12,5 +12,16 @@
 	<c:if test="${not empty param.name}">
 		<p>Name: ${param.name}</p>
 	</c:if>
+	  
+            <td>
+            <div>
+			
+			   <a href="<c:url value='/_02_login/logout.jsp' />">
+  				登出 
+	           </a>
+		
+			</div>
+			</td>
+       
 </body>
 </html>

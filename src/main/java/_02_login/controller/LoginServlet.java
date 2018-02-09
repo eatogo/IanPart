@@ -24,18 +24,18 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session= request.getSession();
 		// 1. 讀取使用者輸入資料
-		String userid=request.getParameter("userId");
+		String usercellphone=request.getParameter("userCellphone");
 		String userpassword=request.getParameter("pswd");
 		String rm=request.getParameter("rememberMe");
 		String requestURI = (String) session.getAttribute("requestURI");
-		System.out.println(userid+userpassword+rm+ requestURI);
+		System.out.println(usercellphone+userpassword+rm+ requestURI);
 		// 2. 進行必要的資料轉換
 		// 3. 檢查使用者輸入資料
 		Map<String,String> errorMsg=new	HashMap<String,String>();
 		request.setAttribute("ErrorMsg", errorMsg);
 		//帳號密碼是否為空
-		if(userid==null || userid.trim().length()==0) {
-			errorMsg.put("AccountEmptyMsg", "帳號欄必須填入");
+		if(usercellphone==null || usercellphone.trim().length()==0) {
+			errorMsg.put("CellphoneEmptyMsg", "帳號欄必須填入");
 		}
 		if(userpassword==null || userpassword.trim().length()==0) {
 			errorMsg.put("PasswordEmptyMsg", "密碼欄必須填入");
@@ -45,7 +45,7 @@ public class LoginServlet extends HttpServlet {
 		Cookie cookiePassword=null;
 		Cookie cookieRememberme=null;
 		if(rm!=null) {
-			cookieUser=new Cookie("user",userid);
+			cookieUser=new Cookie("usercellphone",usercellphone);
 			cookieUser.setMaxAge(30*60*60);
 			cookieUser.setPath(request.getContextPath());
 			String encodePassword=GlobalService.encryptString(userpassword);
@@ -57,7 +57,7 @@ public class LoginServlet extends HttpServlet {
 			cookieRememberme.setMaxAge(30*60*60);
 			cookieRememberme.setPath(request.getContextPath());
 		}else {
-			cookieUser=new Cookie("user",userid);
+			cookieUser=new Cookie("usercellphone",usercellphone);
 			cookieUser.setMaxAge(0);
 			cookieUser.setPath(request.getContextPath());
 			String encodePassword=GlobalService.encryptString(userpassword);
@@ -79,7 +79,7 @@ public class LoginServlet extends HttpServlet {
 		// 4. 進行 Business Logic 運算
 		LoginService login= new LoginServiceImp();
 		userpassword=GlobalService.getMD5Endocing(GlobalService.encryptString(userpassword));
-		MemberBean mb= login.checkIDPassword(userid,userpassword);
+		MemberBean mb= login.checkIDPassword(usercellphone,userpassword);
 		String useridentity=null;
 		String userstatus=null;
 		System.out.println(mb);

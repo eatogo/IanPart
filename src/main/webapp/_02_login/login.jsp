@@ -14,10 +14,10 @@
                         <TR>
              <TD width="180" align="right">帳號：　</TD>
              <TD width="180" colspan='2' align="LEFT">
-             <input  type="text" name="userId" size="10" 
-             value="${sessionScope.user}">
+             <input  type="text" name="userCellphone" size="10" 
+             value="${sessionScope.usercellphone}">
              
-             &nbsp;<small><Font color='red' size="-3">${ErrorMsgKey.AccountEmptyError}
+             &nbsp;<small><Font color='red' size="-3">${ErrorMsg.CellphoneEmptyMsg}
              </Font></small></TD>
          </TR>
          <TR>
@@ -26,7 +26,7 @@
              <input  type="password" name="pswd"  size="10" 
              value="${sessionScope.password}">
               
-             &nbsp;<small><Font color='red'  size="-3">${ErrorMsgKey.PasswordEmptyError}
+             &nbsp;<small><Font color='red'  size="-3">${ErrorMsg.PasswordEmptyMsg}
              </Font></small></TD>
              
          </TR>  
@@ -46,7 +46,17 @@
          </TR>
         <TR>
             <TD colspan="2" align="center"><input type="submit" value="提交"> </TD>
+            <td>
+            <div>
+			<c:if test="${ ! empty LoginOK }">
+			   <a href="<c:url value='/_02_login/logout.jsp' />">
+  				登出 
+	           </a>
+			</c:if>
+			</div>
+			</td>
          </TR>
+         
 </Table>
 </form>
 </body>
