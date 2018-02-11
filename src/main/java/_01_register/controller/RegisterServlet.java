@@ -1,7 +1,9 @@
 package _01_register.controller;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,7 +23,7 @@ import _01_register.model.MemberBean;
 import _01_register.model.MemberDao;
 import _01_register.model.MemberDao_Jdbc;
 
-@MultipartConfig(location = "", fileSizeThreshold = 5 * 1024 * 1024, maxFileSize = 1024 * 1024
+@MultipartConfig(location ="c:/Users/Ian/eclipse-workspace/ian/src/main/webapp/images/", fileSizeThreshold = 5 * 1024 * 1024, maxFileSize = 1024 * 1024
 		* 500, maxRequestSize = 1024 * 1024 * 500 * 5)
 @WebServlet("/_01_register/register.do")
 public class RegisterServlet extends HttpServlet {
@@ -42,8 +44,7 @@ public class RegisterServlet extends HttpServlet {
 		String useremail1 = "";
 		String useremail2 = "";
 		String useravater = "";
-		String filename="";
-		InputStream is = null;
+		
 		Collection<Part> parts = request.getParts();
 		if (parts != null) {
 			for (Part p : parts) {
@@ -64,8 +65,20 @@ public class RegisterServlet extends HttpServlet {
 						useremail2 = value;
 					} else {
 						Part photo = request.getPart("photo");
-						filename = photo.getSubmittedFileName();
-						useravater =filename;
+						String cd = photo.getHeader("Content-Disposition");
+						//得到上传文件名称
+						 useravater = cd.substring(cd.lastIndexOf("/")+1,cd.length()-1);
+						System.out.println(useravater);
+						
+						try(InputStream in=photo.getInputStream();
+							OutputStream out =new FileOutputStream("c:/Users/Ian/eclipse-workspace/ian/src/main/webapp/images/"+useravater)){
+							byte[]buffer=new byte[1024];
+							int length=-1;
+							while((length=in.read(buffer))!=-1) {
+								out.write(buffer, 0, length);
+							}
+						}
+								
 					}
 
 				}
@@ -122,5 +135,7 @@ public class RegisterServlet extends HttpServlet {
 			rd.forward(request, response);
 		}
 	}
+	  
+
 	}
 	
