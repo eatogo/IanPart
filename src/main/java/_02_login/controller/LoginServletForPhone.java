@@ -33,10 +33,10 @@ public class LoginServletForPhone extends HttpServlet {
 		}
 		System.out.println("input: "+jsonIn);
 		JsonObject jsonObject=gson.fromJson(jsonIn.toString(), JsonObject.class);
-		String usercellphone=jsonObject.get("usercellphone").getAsString();
-		String userpassword=jsonObject.get("userpassword").getAsString();
+		String usercellphone=jsonObject.get("id").getAsString();
+		String userpassword=jsonObject.get("password").getAsString();
 		boolean isUserValid = false;
-		String errorMsg=null;
+		String errorMsg="";
 		if(usercellphone==null || usercellphone.trim().length()==0) {
 			errorMsg= errorMsg+"帳號欄必須填入";
 		}

@@ -22,6 +22,10 @@
 							<header >
 								<h1>註冊</h1>
 							</header>
+							
+							
+							
+							
 							<form ENCTYPE="multipart/form-data" action="<c:url value='register.do' />"  id="register.do" method="POST"> 
 							<div id="aaa">
 							行動電話<input style="background:white;margin-left:1px;" type="text" name=usercellphone value="${param.usercellphone}">
@@ -38,15 +42,10 @@
      						<br/>
 						
 							
-							電子信箱<input style="background:white;margin-left:1px;"  type="email" name=useremail1 value="${param.useremail1}">
+							電子信箱<input style="background:white;margin-left:1px;"  type="email" name=useremail value="${param.useremail1}">
 							<font color="red" size="-1">${MsgMap.errorEmail1}</font>
-      						<br/>
-							
-							信箱驗證碼<input style="background:white;margin-left:1px;" type="text" name=useremail2 value="${param.useremail2}">
-							<font color="red" size="-1">${MsgMap.errorEmail2}</font>
-      						<br/>
-							
-							<button>寄出驗證信</button><BR>
+      						<button type="submit" name="submit" value="verify">寄出驗證信
+							</button>							
 							
 							
 							上傳圖片<input style="background:white;margin-left:1px;"  type="file" name=photo ><br>
