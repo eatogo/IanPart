@@ -14,11 +14,14 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
+
+import _00_init.util.GlobalService;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -79,65 +82,117 @@ public class RegisterServlet extends HttpServlet {
 						}
 					}
 				}
-					// 2. 進行必要的資料轉換(=驗證=)
-					// 3. 檢查使用者輸入資料(=驗證=)
-					if (usercellphone == null || usercellphone.trim().length() == 0) {
-						errorMsg.put("errorphone", "電話號碼欄必須輸入");
-					}
-					if (userpassword == null || userpassword.trim().length() == 0) {
-						errorMsg.put("errorPasswordEmpty", "密碼欄必須輸入");
-					}
-					if (username == null || username.trim().length() == 0) {
-						errorMsg.put("errorName", "姓名欄必須輸入");
-					}
-					if (useremail == null || useremail.trim().length() == 0) {
-						errorMsg.put("errorEmail1", "電子郵件欄必須輸入");
-					}
-					if (!errorMsg.isEmpty()) {
-						RequestDispatcher rd = request.getRequestDispatcher("register.jsp");
-						rd.forward(request, response);
-						return;
-					}
-					// 4. 進行Business Logic運算(=驗證=)
-					String host = "smtp.gmail.com";
-					int port = 587;
-					final String user = "iw5420@gmail.com";
-					final String password = "qaz124321231";// your password
+				// 2. 進行必要的資料轉換(=驗證=)
+				// 3. 檢查使用者輸入資料(=驗證=)
+				if (usercellphone == null || usercellphone.trim().length() == 0) {
+					errorMsg.put("errorphone", "電話號碼欄必須輸入");
+				}
+				if (userpassword == null || userpassword.trim().length() == 0) {
+					errorMsg.put("errorPasswordEmpty", "密碼欄必須輸入");
+				}
+				if (username == null || username.trim().length() == 0) {
+					errorMsg.put("errorName", "姓名欄必須輸入");
+				}
+				if (useremail == null || useremail.trim().length() == 0) {
+					errorMsg.put("errorEmail1", "電子郵件欄必須輸入");
+				}
+				if (!errorMsg.isEmpty()) {
+					RequestDispatcher rd = request.getRequestDispatcher("register.jsp");
+					rd.forward(request, response);
+					return;
+				}
+				// 3.2記住使用者輸入資料
+				Cookie cookieUsercellphone = null;
+				Cookie cookiePassword = null;
+				Cookie cookieUsername = null;
+				Cookie cookieUseremail = null;
+				Cookie cookieVerifynumber=null;
+				
+				cookieUsercellphone = new Cookie("usercellphone", usercellphone);
+				cookieUsercellphone.setMaxAge(30 * 60 * 60);
+				cookieUsercellphone.setPath(request.getContextPath());
+				String encodePassword = GlobalService.encryptString(userpassword);
+				// public Cookie(java.lang.String name,java.lang.String value)
+				cookiePassword = new Cookie("userpassword", encodePassword);
+				cookiePassword.setMaxAge(30 * 60 * 60);
+				cookiePassword.setPath(request.getContextPath());
+				
+				username=java.net.URLEncoder.encode(username,"UTF-8");
+				cookieUsername = new Cookie("username", username);
+				cookieUsername.setMaxAge(30 * 60 * 60);
+				cookieUsername.setPath(request.getContextPath());
 
-					Properties props = new Properties();
-					props.put("mail.smtp.host", host);
-					props.put("mail.smtp.auth", "true");
-					props.put("mail.smtp.starttls.enable", "true");
-					props.put("mail.smtp.port", port);
-					Session session2 = Session.getInstance(props, new Authenticator() {
-						protected PasswordAuthentication getPasswordAuthentication() {
-							return new PasswordAuthentication(user, password);
-						}
-					});
+				cookieUseremail = new Cookie("useremail", useremail);
+				cookieUseremail.setMaxAge(30 * 60 * 60);
+				cookieUseremail.setPath(request.getContextPath());
 
-					try {
-
-						Message message = new MimeMessage(session2);
-						message.setFrom(new InternetAddress("iw5420@gmail.com"));
-						message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("iw5420@gmail.com"));
-						message.setSubject("測試寄信.");
-						message.setText("Dear Levin, \n\n 測試 測試 測試 測試 測試 測試 email !");
-
-						Transport transport = session2.getTransport("smtp");
-						transport.connect(host, port, username, password);
-
-						Transport.send(message);
-
-						System.out.println("寄送email結束.");
-
-					} catch (MessagingException e) {
-						throw new RuntimeException(e);
+				// 4. 進行Business Logic運算(=驗證=)
+				// 4.1產生驗證碼
+				int z;
+				StringBuilder sb = new StringBuilder();
+				int i;
+				for (i = 0; i < 8; i++) {
+					z = (int) ((Math.random() * 7) % 3);
+					if (z == 1) { // 放數字
+						sb.append((int) ((Math.random() * 9) + 1));
+					} else if (z == 2) { // 放大寫英文
+						sb.append((char) (((Math.random() * 26) + 65)));
+					} else {// 放小寫英文
+						sb.append((char) ((Math.random() * 26) + 97));
 					}
 				}
+				String sbs = sb.toString();
+				System.out.println(sbs);
+				cookieVerifynumber = new Cookie("verifynumber", sbs);
+				cookieVerifynumber.setMaxAge(30 * 60 * 60);
+				cookieVerifynumber.setPath(request.getContextPath());
+				response.addCookie(cookieUsercellphone);
+				response.addCookie(cookiePassword);
+				response.addCookie(cookieUsername);
+				response.addCookie(cookieUseremail);	
+				response.addCookie(cookieVerifynumber);
+				
+				String host = "smtp.gmail.com";
+				int port = 587;
+				final String user = "iw5420@gmail.com";
+				final String password = "qaz124321231";// your password
 
-				// 5.依照 Business Logic 運算結果來挑選適當的畫面(=驗證=)
-			}
-		 else {
+				Properties props = new Properties();
+				props.put("mail.smtp.host", host);
+				props.put("mail.smtp.auth", "true");
+				props.put("mail.smtp.starttls.enable", "true");
+				props.put("mail.smtp.port", port);
+				Session session2 = Session.getInstance(props, new Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(user, password);
+					}
+				});
+				try {
+					Message message = new MimeMessage(session2);
+					message.setFrom(new InternetAddress("iw5420@gmail.com"));
+					message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(useremail));
+					message.setSubject("測試寄信.");
+					message.setText("Dear " + username + ", 您的驗證碼為" + sbs);
+
+					Transport transport = session2.getTransport("smtp");
+					transport.connect(host, port, username, password);
+
+					Transport.send(message);
+
+					System.out.println("寄送email結束.");
+					
+					
+				} catch (MessagingException e) {
+					throw new RuntimeException(e);
+				}
+			}	
+			
+			
+			RequestDispatcher rd = request.getRequestDispatcher("verifyemail.jsp");
+			rd.forward(request, response);
+			return;	
+			// 5.依照 Business Logic 運算結果來挑選適當的畫面(=驗證=)
+		} else {
 
 			// 1. 讀取使用者輸入資料
 			Collection<Part> parts2 = request.getParts();
@@ -156,11 +211,13 @@ public class RegisterServlet extends HttpServlet {
 							useremail = value2;
 						} else {
 							Part photo = request.getPart("photo");
-							String cd = photo.getHeader("Content-Disposition");
-							System.out.println(cd);
+							useravater= photo.getSubmittedFileName();
+							//String cd = photo.getHeader("Content-Disposition");
+							//System.out.println(cd2);
+							//System.out.println(cd);
 							// 得到上傳文件名稱
 							// 因為\是跳脫字元,所以\要重複一次
-							useravater = cd.substring(cd.lastIndexOf("\\") + 1, cd.length() - 1);
+							//useravater = cd.substring(cd.lastIndexOf("\\") + 1, cd.length() - 1);
 							System.out.println(useravater);
 
 							try (InputStream in = photo.getInputStream();
@@ -173,9 +230,7 @@ public class RegisterServlet extends HttpServlet {
 									out.write(buffer, 0, length);
 								}
 							}
-
 						}
-
 					}
 				}
 				// 2. 進行必要的資料轉換
@@ -193,11 +248,32 @@ public class RegisterServlet extends HttpServlet {
 				if (useremail == null || useremail.trim().length() == 0) {
 					errorMsg.put("errorEmail1", "電子郵件欄必須輸入");
 				}
+				//檢查是否有驗證信箱
+				Cookie[] cookies = request.getCookies();
+				String cookieName = "";
+				String verifymail="false";
+				if (cookies != null) {
+					for (int i = 0; i < cookies.length; i++) {
+						cookieName = cookies[i].getName();
+						if (cookieName.equals("verifynumber")) {
+							verifymail = cookies[i].getValue();
+							System.out.println(verifymail);
+						}
+					}
+				}
+				if (verifymail.equals("false")) {
+					errorMsg.put("verifymail", "請先驗證信箱");
+				}
 				if (!errorMsg.isEmpty()) {
 					RequestDispatcher rd = request.getRequestDispatcher("register.jsp");
 					rd.forward(request, response);
 					return;
 				}
+				
+
+				
+				
+				
 				try {
 					// 4. 產生MemberDao物件，以便進行Business Logic運算
 					// MemberDaoImpl_Jdbc類別的功能：

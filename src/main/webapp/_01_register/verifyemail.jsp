@@ -8,9 +8,12 @@
 <title>Insert title here</title>
 </head>
 <body>
-
-信箱驗證碼<input style="background:white;margin-left:1px;" type="number" name=verifynumber value="${param.useremail}">
-							<font color="red" size="-1">${MsgMap.errorEmail2}</font>
+<form action="<c:url value= 'verifymail.do'/>" method="POST" name="verifymail" >
+信箱驗證碼<input style="background:white;margin-left:1px;" type="text" name=verifynumber value="${param.verifynumber}">
+							<font color="red" size="-1">${MsgMap.verifynumberEmptyMsg}</font>
       						<br/>
+      						<button type="submit" name="submit" value="Sumbit">驗證信箱
+							</button>	
+      						</form>
 </body>
 </html>

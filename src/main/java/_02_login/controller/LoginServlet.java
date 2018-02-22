@@ -21,6 +21,9 @@ import _02_login.model.LoginServiceImp;
 @WebServlet("/_02_login/login.do")
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		   doPost(request, response);
+	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session= request.getSession();
 		// 1. 讀取使用者輸入資料
