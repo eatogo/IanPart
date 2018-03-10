@@ -36,7 +36,7 @@ import _01_register.model.MemberBean;
 import _01_register.model.MemberDao;
 import _01_register.model.MemberDao_Jdbc;
 
-@MultipartConfig(location = "c:/Users/Ian/eclipse-workspace/ian/src/main/webapp/images/", fileSizeThreshold = 5 * 1024
+@MultipartConfig(location = "", fileSizeThreshold = 5 * 1024
 		* 1024, maxFileSize = 1024 * 1024 * 500, maxRequestSize = 1024 * 1024 * 500 * 5)
 @WebServlet("/_01_register/register.do")
 public class RegisterServlet extends HttpServlet {
@@ -53,7 +53,8 @@ public class RegisterServlet extends HttpServlet {
 		System.out.println(verifyorsubmit);
 		request.setAttribute("MsgMap", errorMsg);
 		session.setAttribute("MsgOK", msgOK);
-
+		String path = this.getServletContext().getRealPath("/");
+		System.out.println(path);
 		String userpassword = "";
 		String usercellphone = "";
 		String username = "";
@@ -117,7 +118,6 @@ public class RegisterServlet extends HttpServlet {
 				cookiePassword.setMaxAge(30 * 60 * 60);
 				cookiePassword.setPath(request.getContextPath());
 				
-				username=java.net.URLEncoder.encode(username,"UTF-8");
 				cookieUsername = new Cookie("username", username);
 				cookieUsername.setMaxAge(30 * 60 * 60);
 				cookieUsername.setPath(request.getContextPath());
@@ -172,16 +172,12 @@ public class RegisterServlet extends HttpServlet {
 					message.setFrom(new InternetAddress("iw5420@gmail.com"));
 					message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(useremail));
 					message.setSubject("測試寄信.");
-					message.setText("Dear " + username + ", 您的驗證碼為" + sbs);
+					message.setText("Dear " + user + ", 您的驗證碼為" + sbs);
 
 					Transport transport = session2.getTransport("smtp");
 					transport.connect(host, port, username, password);
-
 					Transport.send(message);
-
-					System.out.println("寄送email結束.");
-					
-					
+					System.out.println("寄送email結束.");		
 				} catch (MessagingException e) {
 					throw new RuntimeException(e);
 				}
@@ -222,7 +218,7 @@ public class RegisterServlet extends HttpServlet {
 
 							try (InputStream in = photo.getInputStream();
 									OutputStream out = new FileOutputStream(
-											"c:\\Users\\Ian\\eclipse-workspace\\ian\\src\\main\\webapp\\images\\"
+											path+"images/"
 													+ useravater)) {
 								byte[] buffer = new byte[1024];
 								int length = -1;
