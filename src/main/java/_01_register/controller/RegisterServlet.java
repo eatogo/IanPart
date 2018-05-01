@@ -154,8 +154,8 @@ public class RegisterServlet extends HttpServlet {
 				
 				String host = "smtp.gmail.com";
 				int port = 587;
-				final String user = "iw5420@gmail.com";
-				final String password = "qaz124321231";// your password
+				final String user = "iw5420@gmail.com"; // your e-mail
+				final String password = "********";// your password
 
 				Properties props = new Properties();
 				props.put("mail.smtp.host", host);
